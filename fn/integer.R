@@ -52,3 +52,40 @@ iproportional <- function(v, t){
     }
     return(v)
 }
+
+
+##########################
+#   Specific functions   #
+##########################
+
+######################
+#   check.positive   #
+######################
+#   Description: Check if a raster has positive cells
+#   Arguments:
+#      r: raster
+#   Value:
+#      logical: TRUE/FALSE
+check.positive <- function(r){
+  global(r, "sum", na.rm = TRUE)$sum > 0
+}
+
+##########################
+#   raster2pointvector   #
+##########################
+#   Description: Check if a raster has positive cells
+#   Arguments:
+#      r: raster
+#      y: year
+#      m: municipal code
+#   Value:
+#      sf with point geometry
+raster2pointvector <- function(r, y, m){
+  p <- ifel(r == 0, NA, r) |>
+    st_as_stars() |>
+    st_xy2sfc(as_points = TRUE) |>
+    st_as_sf() |>
+    rename(bu = 1) |>
+    mutate(Year = y, CodMuni = m, .before = 1)
+  p
+}

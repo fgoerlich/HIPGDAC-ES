@@ -73,19 +73,31 @@ check.positive <- function(r){
 ##########################
 #   raster2pointvector   #
 ##########################
-#   Description: Check if a raster has positive cells
+#   Description: Raster 2 point Vector & redistrobution
 #   Arguments:
 #      r: raster
 #      y: year
 #      m: municipal code
 #   Value:
-#      sf with point geometry
-raster2pointvector <- function(r, y, m){
+#      sf with point geometry & population per cell
+raster2pointvector <- function(r, y, m, Pop){
   p <- ifel(r == 0, NA, r) |>
     st_as_stars() |>
     st_xy2sfc(as_points = TRUE) |>
     st_as_sf() |>
     rename(bu = 1) |>
     mutate(Year = y, CodMuni = m, .before = 1)
-  p
+  if(y != 2011) {
+    p <- mutate(p, po = iproportional(bu, Pop), .after = bu)
+  } else {
+    p <- mutate(p, po =  proportional(bu, Pop), .after = bu)
+  }
+  filter(p, po > 0)
 }
+
+#######################
+#   ! %in% operator   #
+#######################
+#   Description: %out% operator
+#   https://stackoverflow.com/questions/38351820/negation-of-in-in-r
+`%out%` <- function(a, b) ! a %in% b

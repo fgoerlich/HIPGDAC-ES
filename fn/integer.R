@@ -101,3 +101,4 @@ raster2pointvector <- function(r, y, m, Pop){
 #   Description: %out% operator
 #   https://stackoverflow.com/questions/38351820/negation-of-in-in-r
 `%out%` <- function(a, b) ! a %in% b
+
